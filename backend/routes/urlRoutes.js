@@ -1,36 +1,29 @@
 const express = require("express");
-const shortid = require("shortid");
+const { nanoid } = require("nanoid");
 const Url = require("../models/Url");
 
 const router = express.Router();
 
+// create short url
 router.post("/shorten", async (req, res) => {
   const { originalUrl } = req.body;
+  if (!originalUrl) {
+    return res.json({ error: "URL required" });
+  }
 
-  const shortId = shortid.generate();
-
+  const shortId = nanoid(6);
   const newUrl = new Url({
     originalUrl,
     shortId
   });
 
   await newUrl.save();
+  const shortUrl = `${req.protocol}://${req.get("host")}/${shortId}`;
+  res.json({ shortUrl });
 
-  res.json({
-    shortUrl: `http://localhost:5000/${shortId}`
-  });
 });
 
-router.get("/:shortId", async (req, res) => {
-  const url = await Url.findOne({ shortId: req.params.shortId });
-
-  if (url) {
-    return res.redirect(url.originalUrl);
-  }
-
-  res.status(404).send("Not found");
-});
-
+// get all urls
 router.get("/urls/all", async (req, res) => {
   const urls = await Url.find();
   res.json(urls);

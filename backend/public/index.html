@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>URL Shortener</title>
+<style>
+
+body{
+font-family: Arial;
+background:#f5f7fb;
+text-align:center;
+padding-top:120px;
+}
+
+.container{
+background:white;
+width:500px;
+margin:auto;
+padding:40px;
+border-radius:10px;
+box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+
+input{
+width:70%;
+padding:12px;
+border:1px solid #ddd;
+border-radius:6px;
+}
+
+button{
+padding:12px 20px;
+background:#2563EB;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+.result{
+margin-top:20px;
+font-size:18px;
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<h2>URL Shortener</h2>
+<input id="url" placeholder="Paste your long URL">
+<button onclick="shorten()">Shorten</button>
+<div class="result" id="result"></div>
+</div>
+<script>
+
+async function shorten(){
+const url=document.getElementById("url").value;
+const res=await fetch("/api/shorten",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({originalUrl:url})
+});
+
+const data=await res.json();
+document.getElementById("result").innerHTML=
+
+`<p>
+<a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>
+<button onclick="copy('${data.shortUrl}')">Copy</button>
+</p>`;
+
+}
+
+function copy(link){
+navigator.clipboard.writeText(link);
+alert("Copied!");
+}
+
+</script>
+</body>
+</html>

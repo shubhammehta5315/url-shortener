@@ -7,15 +7,30 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// serve frontend
+app.use(express.static("public"));
 
 app.get("/", (req, res) => {
-  res.send("URL Shortener API running 🚀");
+  res.sendFile(__dirname + "/public/index.html");
 });
 
 app.use("/api", urlRoutes);
 
+// redirect route
+const Url = require("./models/Url");
+
+app.get("/:shortId", async (req, res) => {
+  const url = await Url.findOne({ shortId: req.params.shortId });
+  if (!url) return res.send("URL not found");
+  url.clicks++;
+  await url.save();
+  res.redirect(url.originalUrl);
+});
+
 mongoose.connect(process.env.MONGO_URI)
-.then(()=> console.log("MongoDB Connected"))
+.then(() => console.log("MongoDB connected"))
 .catch(err => console.log(err));
 
 const PORT = process.env.PORT || 5000;
