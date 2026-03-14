@@ -5,7 +5,7 @@ const Url = require("../models/Url");
 
 const router = express.Router();
 
-// create short url
+
 router.post("/shorten", async (req,res)=>{
 
  try{
@@ -37,7 +37,6 @@ router.post("/shorten", async (req,res)=>{
 
 });
 
-// get analytics list
 router.get("/urls/all",async(req,res)=>{
 
  try{
