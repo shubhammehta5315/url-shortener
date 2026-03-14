@@ -1,50 +1,267 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shortify - URL Shortener</title>
 
-<title>URL Shortener</title>
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-<script src="https://cdn.tailwindcss.com"></script>
+<style>
 
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+}
+
+body{
+
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+
+background: linear-gradient(135deg,#3b82f6,#8b5cf6);
+
+}
+
+/* Glass Wrapper */
+
+.wrapper{
+
+width:900px;
+padding:30px;
+
+background: rgba(255,255,255,0.15);
+
+border-radius:20px;
+
+backdrop-filter: blur(10px);
+
+box-shadow:0 30px 80px rgba(0,0,0,0.25);
+
+}
+
+/* Top bar */
+
+.topbar{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+margin-bottom:40px;
+
+color:white;
+
+}
+
+.logo{
+
+font-weight:600;
+font-size:20px;
+
+}
+
+/* Center card */
+
+.card{
+
+background:white;
+
+padding:40px;
+
+border-radius:16px;
+
+text-align:center;
+
+box-shadow:0 10px 30px rgba(0,0,0,0.15);
+
+}
+
+.card h1{
+
+margin-bottom:10px;
+
+font-size:28px;
+
+}
+
+.subtitle{
+
+color:#6b7280;
+
+margin-bottom:30px;
+
+}
+
+/* Input group */
+
+.input-group{
+
+display:flex;
+
+gap:10px;
+
+margin-bottom:25px;
+
+}
+
+input{
+
+flex:1;
+
+padding:14px;
+
+border-radius:8px;
+
+border:1px solid #ddd;
+
+font-size:14px;
+
+}
+
+button{
+
+border:none;
+
+padding:14px 20px;
+
+border-radius:8px;
+
+cursor:pointer;
+
+font-weight:500;
+
+}
+
+/* Primary button */
+
+.primary{
+
+background:#2563eb;
+
+color:white;
+
+}
+
+.primary:hover{
+
+background:#1e40af;
+
+}
+
+/* Copy button */
+
+.copy{
+
+background:#10b981;
+
+color:white;
+
+}
+
+/* Result Box */
+
+.result-box{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:15px;
+
+background:#f3f4f6;
+
+border-radius:10px;
+
+margin-bottom:25px;
+
+}
+
+.result-box a{
+
+color:#2563eb;
+
+text-decoration:none;
+
+}
+
+/* Table */
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+th,td{
+
+padding:12px;
+
+border-bottom:1px solid #eee;
+
+text-align:center;
+
+font-size:14px;
+
+}
+
+th{
+
+color:#6b7280;
+
+}
+
+</style>
 </head>
 
-<body class="bg-gradient-to-r from-blue-500 to-purple-600 min-h-screen flex items-center justify-center">
+<body>
 
-<div class="bg-white shadow-2xl rounded-xl w-[750px] p-10">
+<div class="wrapper">
 
-<h1 class="text-3xl font-bold text-center mb-2">🔗 URL Shortener</h1>
+<div class="topbar">
+<div class="logo">🔗 Shortify</div>
+<div>☰</div>
+</div>
 
-<p class="text-gray-500 text-center mb-6">
+<div class="card">
+
+<h1>Shorten Your Long URLs</h1>
+
+<p class="subtitle">
 Create short and shareable links instantly
 </p>
 
-<div class="flex gap-3">
+<div class="input-group">
 
-<input
-id="url"
-placeholder="Paste your long URL here"
-class="flex-1 border rounded-lg p-3 outline-none"
-/>
+<input id="url" placeholder="Paste your long URL here">
 
-<button
-onclick="shorten()"
-class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
->
-Shorten
-</button>
+<button class="primary" onclick="shorten()">Shorten</button>
 
 </div>
 
-<div id="result" class="mt-6 text-center"></div>
+<div id="result"></div>
 
-<table class="mt-8 w-full text-sm">
+<table>
 
-<thead class="text-gray-600">
+<thead>
 
 <tr>
-<th class="text-left pb-3">Short URL</th>
-<th class="text-left pb-3">Clicks</th>
-<th class="text-left pb-3">Copy</th>
+
+<th>Short URL</th>
+
+<th>Clicks</th>
+
+<th>Copy</th>
+
 </tr>
 
 </thead>
@@ -55,11 +272,20 @@ Shorten
 
 </div>
 
+</div>
+
 <script>
+
+/* shorten url */
 
 async function shorten(){
 
 const url=document.getElementById("url").value;
+
+if(!url){
+alert("Enter URL");
+return;
+}
 
 const res=await fetch("/api/shorten",{
 
@@ -77,19 +303,27 @@ const data=await res.json();
 
 document.getElementById("result").innerHTML=
 
-`<a class="text-blue-600 font-medium" href="${data.shortUrl}" target="_blank">
-${data.shortUrl}
-</a>`;
+`<div class="result-box">
+
+<a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>
+
+<button class="copy" onclick="copy('${data.shortUrl}')">Copy</button>
+
+</div>`;
 
 loadLinks();
 
 }
+
+/* copy */
 
 function copy(link){
 
 navigator.clipboard.writeText(link);
 
 }
+
+/* load analytics */
 
 async function loadLinks(){
 
@@ -107,23 +341,16 @@ const shortUrl=window.location.origin+"/"+url.shortId;
 
 table.innerHTML+=`
 
-<tr class="border-t">
+<tr>
 
-<td class="py-3">
-<a class="text-blue-600" href="${shortUrl}" target="_blank">
-${shortUrl}
-</a>
+<td>
+<a href="${shortUrl}" target="_blank">${shortUrl}</a>
 </td>
 
 <td>${url.clicks}</td>
 
 <td>
-<button
-class="bg-green-500 text-white px-3 py-1 rounded"
-onclick="copy('${shortUrl}')"
->
-Copy
-</button>
+<button class="copy" onclick="copy('${shortUrl}')">Copy</button>
 </td>
 
 </tr>
