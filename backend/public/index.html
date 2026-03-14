@@ -1,91 +1,52 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 
 <title>URL Shortener</title>
 
-<style>
-
-body{
-font-family:Arial;
-background:linear-gradient(135deg,#2563eb,#4f46e5);
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-margin:0;
-}
-
-.container{
-background:white;
-padding:40px;
-width:650px;
-border-radius:12px;
-box-shadow:0 10px 40px rgba(0,0,0,0.15);
-text-align:center;
-}
-
-input{
-width:70%;
-padding:12px;
-border:1px solid #ddd;
-border-radius:6px;
-}
-
-button{
-padding:12px 18px;
-background:#2563EB;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
-
-.result{
-margin-top:20px;
-}
-
-table{
-margin-top:30px;
-width:100%;
-border-collapse:collapse;
-}
-
-th,td{
-padding:10px;
-border-bottom:1px solid #eee;
-font-size:14px;
-}
-
-.copy{
-background:#10b981;
-}
-
-</style>
+<script src="https://cdn.tailwindcss.com"></script>
 
 </head>
 
-<body>
+<body class="bg-gradient-to-r from-blue-500 to-purple-600 min-h-screen flex items-center justify-center">
 
-<div class="container">
+<div class="bg-white shadow-2xl rounded-xl w-[750px] p-10">
 
-<h2>🔗 URL Shortener</h2>
+<h1 class="text-3xl font-bold text-center mb-2">🔗 URL Shortener</h1>
 
-<input id="url" placeholder="Paste your long URL">
+<p class="text-gray-500 text-center mb-6">
+Create short and shareable links instantly
+</p>
 
-<button onclick="shorten()">Shorten</button>
+<div class="flex gap-3">
 
-<div class="result" id="result"></div>
+<input
+id="url"
+placeholder="Paste your long URL here"
+class="flex-1 border rounded-lg p-3 outline-none"
+/>
 
-<table>
+<button
+onclick="shorten()"
+class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
+>
+Shorten
+</button>
 
-<thead>
+</div>
+
+<div id="result" class="mt-6 text-center"></div>
+
+<table class="mt-8 w-full text-sm">
+
+<thead class="text-gray-600">
+
 <tr>
-<th>Short URL</th>
-<th>Clicks</th>
-<th>Copy</th>
+<th class="text-left pb-3">Short URL</th>
+<th class="text-left pb-3">Clicks</th>
+<th class="text-left pb-3">Copy</th>
 </tr>
+
 </thead>
 
 <tbody id="links"></tbody>
@@ -103,6 +64,7 @@ const url=document.getElementById("url").value;
 const res=await fetch("/api/shorten",{
 
 method:"POST",
+
 headers:{
 "Content-Type":"application/json"
 },
@@ -115,7 +77,9 @@ const data=await res.json();
 
 document.getElementById("result").innerHTML=
 
-`<a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>`;
+`<a class="text-blue-600 font-medium" href="${data.shortUrl}" target="_blank">
+${data.shortUrl}
+</a>`;
 
 loadLinks();
 
@@ -124,8 +88,6 @@ loadLinks();
 function copy(link){
 
 navigator.clipboard.writeText(link);
-
-alert("Copied!");
 
 }
 
@@ -145,13 +107,24 @@ const shortUrl=window.location.origin+"/"+url.shortId;
 
 table.innerHTML+=`
 
-<tr>
+<tr class="border-t">
 
-<td><a href="${shortUrl}" target="_blank">${shortUrl}</a></td>
+<td class="py-3">
+<a class="text-blue-600" href="${shortUrl}" target="_blank">
+${shortUrl}
+</a>
+</td>
 
 <td>${url.clicks}</td>
 
-<td><button class="copy" onclick="copy('${shortUrl}')">Copy</button></td>
+<td>
+<button
+class="bg-green-500 text-white px-3 py-1 rounded"
+onclick="copy('${shortUrl}')"
+>
+Copy
+</button>
+</td>
 
 </tr>
 
@@ -166,5 +139,4 @@ loadLinks();
 </script>
 
 </body>
-
 </html>
