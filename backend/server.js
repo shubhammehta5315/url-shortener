@@ -1,40 +1,15 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const urlRoutes = require("./routes/urlRoutes");
+const Url=require("./models/Url");
 
-const app = express();
+app.get("/:shortId",async(req,res)=>{
 
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+ const url=await Url.findOne({shortId:req.params.shortId});
 
-// serve frontend
-app.use(express.static("public"));
+ if(!url) return res.send("URL not found");
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/public/index.html");
-});
+ url.clicks++;
 
-app.use("/api", urlRoutes);
+ await url.save();
 
-// redirect route
-const Url = require("./models/Url");
+ res.redirect(url.originalUrl);
 
-app.get("/:shortId", async (req, res) => {
-  const url = await Url.findOne({ shortId: req.params.shortId });
-  if (!url) return res.send("URL not found");
-  url.clicks++;
-  await url.save();
-  res.redirect(url.originalUrl);
-});
-
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("MongoDB connected"))
-.catch(err => console.log(err));
-
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log("Server running");
 });

@@ -1,23 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <title>URL Shortener</title>
+
 <style>
 
 body{
-font-family: Arial;
-background:#f5f7fb;
-text-align:center;
-padding-top:120px;
+font-family:Inter,Arial;
+background:linear-gradient(135deg,#2563eb,#4f46e5);
+margin:0;
+padding:0;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
 }
 
 .container{
 background:white;
-width:500px;
-margin:auto;
 padding:40px;
-border-radius:10px;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
+width:650px;
+border-radius:12px;
+box-shadow:0 10px 40px rgba(0,0,0,0.15);
+text-align:center;
+}
+
+h1{
+margin-bottom:20px;
 }
 
 input{
@@ -28,55 +38,140 @@ border-radius:6px;
 }
 
 button{
-padding:12px 20px;
+padding:12px 18px;
 background:#2563EB;
-border:none;
 color:white;
+border:none;
 border-radius:6px;
 cursor:pointer;
 }
 
+button:hover{
+background:#1e4ed8;
+}
+
 .result{
 margin-top:20px;
-font-size:18px;
+}
+
+table{
+margin-top:30px;
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:10px;
+border-bottom:1px solid #eee;
+font-size:14px;
+}
+
+.copy{
+background:#10b981;
 }
 
 </style>
+
 </head>
+
 <body>
+
 <div class="container">
-<h2>URL Shortener</h2>
-<input id="url" placeholder="Paste your long URL">
+
+<h1>🔗 URL Shortener</h1>
+
+<input id="url" placeholder="Paste your long URL here">
+
 <button onclick="shorten()">Shorten</button>
+
 <div class="result" id="result"></div>
+
+<table>
+
+<thead>
+<tr>
+<th>Short URL</th>
+<th>Clicks</th>
+<th>Copy</th>
+</tr>
+</thead>
+
+<tbody id="links"></tbody>
+
+</table>
+
 </div>
+
 <script>
 
 async function shorten(){
+
 const url=document.getElementById("url").value;
+
 const res=await fetch("/api/shorten",{
+
 method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
+
 body:JSON.stringify({originalUrl:url})
+
 });
 
 const data=await res.json();
+
 document.getElementById("result").innerHTML=
 
-`<p>
-<a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>
-<button onclick="copy('${data.shortUrl}')">Copy</button>
-</p>`;
+`<a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>`;
+
+loadLinks();
 
 }
 
 function copy(link){
+
 navigator.clipboard.writeText(link);
+
 alert("Copied!");
+
 }
 
+async function loadLinks(){
+
+const res=await fetch("/api/urls/all");
+
+const data=await res.json();
+
+const table=document.getElementById("links");
+
+table.innerHTML="";
+
+data.forEach(url=>{
+
+const shortUrl=window.location.origin+"/"+url.shortId;
+
+table.innerHTML+=`
+
+<tr>
+
+<td><a href="${shortUrl}" target="_blank">${shortUrl}</a></td>
+
+<td>${url.clicks}</td>
+
+<td><button class="copy" onclick="copy('${shortUrl}')">Copy</button></td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+loadLinks();
+
 </script>
+
 </body>
 </html>
