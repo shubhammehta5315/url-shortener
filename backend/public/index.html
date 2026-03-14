@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Shortify - URL Shortener</title>
 
-<!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
@@ -28,8 +30,6 @@ background: linear-gradient(135deg,#3b82f6,#8b5cf6);
 
 }
 
-/* Glass Wrapper */
-
 .wrapper{
 
 width:900px;
@@ -39,13 +39,12 @@ background: rgba(255,255,255,0.15);
 
 border-radius:20px;
 
-backdrop-filter: blur(10px);
+backdrop-filter: blur(12px);
 
 box-shadow:0 30px 80px rgba(0,0,0,0.25);
 
 }
 
-/* Top bar */
 
 .topbar{
 
@@ -66,18 +65,13 @@ font-size:20px;
 
 }
 
-/* Center card */
 
 .card{
 
 background:white;
-
 padding:40px;
-
 border-radius:16px;
-
 text-align:center;
-
 box-shadow:0 10px 30px rgba(0,0,0,0.15);
 
 }
@@ -85,7 +79,6 @@ box-shadow:0 10px 30px rgba(0,0,0,0.15);
 .card h1{
 
 margin-bottom:10px;
-
 font-size:28px;
 
 }
@@ -93,19 +86,15 @@ font-size:28px;
 .subtitle{
 
 color:#6b7280;
-
 margin-bottom:30px;
 
 }
 
-/* Input group */
 
 .input-group{
 
 display:flex;
-
 gap:10px;
-
 margin-bottom:25px;
 
 }
@@ -113,37 +102,29 @@ margin-bottom:25px;
 input{
 
 flex:1;
-
 padding:14px;
-
 border-radius:8px;
-
 border:1px solid #ddd;
-
 font-size:14px;
 
 }
 
+
 button{
 
 border:none;
-
 padding:14px 20px;
-
 border-radius:8px;
-
 cursor:pointer;
-
 font-weight:500;
 
 }
 
-/* Primary button */
+/* shorten button */
 
 .primary{
 
 background:#2563eb;
-
 color:white;
 
 }
@@ -154,32 +135,23 @@ background:#1e40af;
 
 }
 
-/* Copy button */
 
 .copy{
 
 background:#10b981;
-
 color:white;
 
 }
 
-/* Result Box */
 
 .result-box{
 
 display:flex;
-
 justify-content:space-between;
-
 align-items:center;
-
 padding:15px;
-
 background:#f3f4f6;
-
 border-radius:10px;
-
 margin-bottom:25px;
 
 }
@@ -187,17 +159,14 @@ margin-bottom:25px;
 .result-box a{
 
 color:#2563eb;
-
 text-decoration:none;
 
 }
 
-/* Table */
 
 table{
 
 width:100%;
-
 border-collapse:collapse;
 
 }
@@ -205,11 +174,8 @@ border-collapse:collapse;
 th,td{
 
 padding:12px;
-
 border-bottom:1px solid #eee;
-
 text-align:center;
-
 font-size:14px;
 
 }
@@ -220,16 +186,41 @@ color:#6b7280;
 
 }
 
+#toast{
+
+position:fixed;
+
+bottom:30px;
+right:30px;
+
+background:#111;
+color:white;
+padding:12px 18px;
+border-radius:8px;
+font-size:14px;
+opacity:0;
+transform:translateY(20px);
+transition:all 0.3s ease;
+
+}
+
+#toast.show{
+
+opacity:1;
+transform:translateY(0);
+
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="wrapper">
-
 <div class="topbar">
 <div class="logo">🔗 Shortify</div>
 <div>☰</div>
+
 </div>
 
 <div class="card">
@@ -255,13 +246,9 @@ Create short and shareable links instantly
 <thead>
 
 <tr>
-
 <th>Short URL</th>
-
 <th>Clicks</th>
-
 <th>Copy</th>
-
 </tr>
 
 </thead>
@@ -274,9 +261,11 @@ Create short and shareable links instantly
 
 </div>
 
-<script>
+<!-- Toast popup -->
 
-/* shorten url */
+<div id="toast">Copied!</div>
+
+<script>
 
 async function shorten(){
 
@@ -318,27 +307,26 @@ loadLinks();
 /* copy */
 
 function copy(link){
-
 navigator.clipboard.writeText(link);
+const toast=document.getElementById("toast");
+toast.classList.add("show");
+
+setTimeout(()=>{
+toast.classList.remove("show");
+},2000);
 
 }
 
 /* load analytics */
 
 async function loadLinks(){
-
 const res=await fetch("/api/urls/all");
-
 const data=await res.json();
-
 const table=document.getElementById("links");
-
 table.innerHTML="";
 
 data.forEach(url=>{
-
 const shortUrl=window.location.origin+"/"+url.shortId;
-
 table.innerHTML+=`
 
 <tr>
@@ -350,15 +338,14 @@ table.innerHTML+=`
 <td>${url.clicks}</td>
 
 <td>
-<button class="copy" onclick="copy('${shortUrl}')">Copy</button>
+<button class="copy" onclick="copy('${shortUrl}')">
+Copy
+</button>
 </td>
 
 </tr>
-
 `;
-
 });
-
 }
 
 loadLinks();
