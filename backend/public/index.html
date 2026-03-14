@@ -21,19 +21,25 @@ font-family:'Inter',sans-serif;
 
 body{
 
-height:100vh;
+min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
 
 background: linear-gradient(135deg,#3b82f6,#8b5cf6);
 
+padding:20px;
+
 }
+
+/* wrapper */
 
 .wrapper{
 
-width:900px;
-padding:30px;
+width:100%;
+max-width:900px;
+
+padding:20px;
 
 background: rgba(255,255,255,0.15);
 
@@ -45,6 +51,7 @@ box-shadow:0 30px 80px rgba(0,0,0,0.25);
 
 }
 
+/* top bar */
 
 .topbar{
 
@@ -52,7 +59,7 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 
-margin-bottom:40px;
+margin-bottom:30px;
 
 color:white;
 
@@ -65,13 +72,18 @@ font-size:20px;
 
 }
 
+/* card */
 
 .card{
 
 background:white;
-padding:40px;
+
+padding:30px;
+
 border-radius:16px;
+
 text-align:center;
+
 box-shadow:0 10px 30px rgba(0,0,0,0.15);
 
 }
@@ -79,52 +91,69 @@ box-shadow:0 10px 30px rgba(0,0,0,0.15);
 .card h1{
 
 margin-bottom:10px;
-font-size:28px;
+
+font-size:26px;
 
 }
 
 .subtitle{
 
 color:#6b7280;
-margin-bottom:30px;
+
+margin-bottom:25px;
 
 }
 
+/* input group */
 
 .input-group{
 
 display:flex;
+
 gap:10px;
+
 margin-bottom:25px;
+
+flex-wrap:wrap;
 
 }
 
 input{
 
 flex:1;
+
+min-width:200px;
+
 padding:14px;
+
 border-radius:8px;
+
 border:1px solid #ddd;
+
 font-size:14px;
 
 }
 
+/* buttons */
 
 button{
 
 border:none;
+
 padding:14px 20px;
+
 border-radius:8px;
+
 cursor:pointer;
+
 font-weight:500;
 
 }
 
-/* shorten button */
-
 .primary{
 
 background:#2563eb;
+
 color:white;
 
 }
@@ -135,34 +164,49 @@ background:#1e40af;
 
 }
 
-
 .copy{
 
 background:#10b981;
+
 color:white;
 
 }
 
+/* result */
 
 .result-box{
 
 display:flex;
+
 justify-content:space-between;
+
 align-items:center;
+
 padding:15px;
+
 background:#f3f4f6;
+
 border-radius:10px;
+
 margin-bottom:25px;
+
+flex-wrap:wrap;
+
+gap:10px;
 
 }
 
 .result-box a{
 
 color:#2563eb;
+
+word-break:break-all;
+
 text-decoration:none;
 
 }
 
+/* table */
 
 table{
 
@@ -174,8 +218,11 @@ border-collapse:collapse;
 th,td{
 
 padding:12px;
+
 border-bottom:1px solid #eee;
+
 text-align:center;
+
 font-size:14px;
 
 }
@@ -186,20 +233,29 @@ color:#6b7280;
 
 }
 
+/* toast */
+
 #toast{
 
 position:fixed;
 
-bottom:30px;
-right:30px;
+bottom:20px;
+right:20px;
 
 background:#111;
+
 color:white;
+
 padding:12px 18px;
+
 border-radius:8px;
+
 font-size:14px;
+
 opacity:0;
+
 transform:translateY(20px);
+
 transition:all 0.3s ease;
 
 }
@@ -207,18 +263,61 @@ transition:all 0.3s ease;
 #toast.show{
 
 opacity:1;
+
 transform:translateY(0);
 
 }
 
+/* mobile responsive */
+
+@media (max-width:600px){
+
+.card{
+
+padding:20px;
+
+}
+
+.input-group{
+
+flex-direction:column;
+
+}
+
+button{
+
+width:100%;
+
+}
+
+.result-box{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+}
+
+table{
+
+font-size:12px;
+
+}
+
+}
+
 </style>
+
 </head>
 
 <body>
 
 <div class="wrapper">
+
 <div class="topbar">
+
 <div class="logo">🔗 Shortify</div>
+
 <div>☰</div>
 
 </div>
@@ -261,8 +360,6 @@ Create short and shareable links instantly
 
 </div>
 
-<!-- Toast popup -->
-
 <div id="toast">Copied!</div>
 
 <script>
@@ -272,8 +369,11 @@ async function shorten(){
 const url=document.getElementById("url").value;
 
 if(!url){
+
 alert("Enter URL");
+
 return;
+
 }
 
 const res=await fetch("/api/shorten",{
@@ -304,29 +404,36 @@ loadLinks();
 
 }
 
-/* copy */
-
 function copy(link){
+
 navigator.clipboard.writeText(link);
+
 const toast=document.getElementById("toast");
+
 toast.classList.add("show");
 
 setTimeout(()=>{
+
 toast.classList.remove("show");
+
 },2000);
 
 }
 
-/* load analytics */
-
 async function loadLinks(){
+
 const res=await fetch("/api/urls/all");
+
 const data=await res.json();
+
 const table=document.getElementById("links");
+
 table.innerHTML="";
 
 data.forEach(url=>{
+
 const shortUrl=window.location.origin+"/"+url.shortId;
+
 table.innerHTML+=`
 
 <tr>
@@ -344,8 +451,11 @@ Copy
 </td>
 
 </tr>
+
 `;
+
 });
+
 }
 
 loadLinks();
@@ -353,4 +463,5 @@ loadLinks();
 </script>
 
 </body>
+
 </html>
