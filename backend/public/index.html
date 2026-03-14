@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <title>URL Shortener</title>
@@ -7,14 +8,13 @@
 <style>
 
 body{
-font-family:Inter,Arial;
+font-family:Arial;
 background:linear-gradient(135deg,#2563eb,#4f46e5);
-margin:0;
-padding:0;
 display:flex;
 justify-content:center;
 align-items:center;
 height:100vh;
+margin:0;
 }
 
 .container{
@@ -24,10 +24,6 @@ width:650px;
 border-radius:12px;
 box-shadow:0 10px 40px rgba(0,0,0,0.15);
 text-align:center;
-}
-
-h1{
-margin-bottom:20px;
 }
 
 input{
@@ -44,10 +40,6 @@ color:white;
 border:none;
 border-radius:6px;
 cursor:pointer;
-}
-
-button:hover{
-background:#1e4ed8;
 }
 
 .result{
@@ -78,9 +70,9 @@ background:#10b981;
 
 <div class="container">
 
-<h1>🔗 URL Shortener</h1>
+<h2>🔗 URL Shortener</h2>
 
-<input id="url" placeholder="Paste your long URL here">
+<input id="url" placeholder="Paste your long URL">
 
 <button onclick="shorten()">Shorten</button>
 
@@ -174,4 +166,5 @@ loadLinks();
 </script>
 
 </body>
+
 </html>

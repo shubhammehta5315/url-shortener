@@ -1,5 +1,6 @@
 const express = require("express");
 const { nanoid } = require("nanoid");
+
 const Url = require("../models/Url");
 
 const router = express.Router();
@@ -7,13 +8,19 @@ const router = express.Router();
 // create short url
 router.post("/shorten", async (req,res)=>{
 
+ try{
+
  const {originalUrl}=req.body;
+
+ if(!originalUrl){
+ return res.status(400).json({error:"URL required"});
+ }
 
  const shortId=nanoid(6);
 
  const newUrl=new Url({
-  originalUrl,
-  shortId
+ originalUrl,
+ shortId
  });
 
  await newUrl.save();
@@ -22,14 +29,28 @@ router.post("/shorten", async (req,res)=>{
 
  res.json({shortUrl});
 
+ }catch(error){
+
+ res.status(500).json({error:"Server error"});
+
+ }
+
 });
 
 // get analytics list
 router.get("/urls/all",async(req,res)=>{
 
+ try{
+
  const urls=await Url.find().sort({createdAt:-1});
 
  res.json(urls);
+
+ }catch(error){
+
+ res.status(500).json({error:"Server error"});
+
+ }
 
 });
 
